@@ -13,7 +13,8 @@ export class MapComponent implements OnInit {
   private initMap(): void {
     this.map = L.map('map', {
       center: [ 46.227638, 2.213749 ],
-      zoom: 6
+      zoom: 6,
+      zoomControl: false
     });
 
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -29,5 +30,6 @@ export class MapComponent implements OnInit {
 
   ngOnInit(): void {
     this.initMap();
+    
   }
 }
