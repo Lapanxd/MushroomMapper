@@ -22,6 +22,12 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    this.map.on('click', (e: any) => {
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+      console.log(`${lat}, ${lng}`);
+    });
+
     tiles.addTo(this.map);
   }
 

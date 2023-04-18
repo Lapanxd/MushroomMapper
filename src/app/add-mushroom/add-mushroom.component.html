@@ -1,0 +1,21 @@
+<div *ngIf="display" class="container">
+    <div class="head">
+        <h3 class="title">Ajouter un nouveau coin</h3>
+        <button class="close" (click)="close()"><fa-icon [icon]="faTimes"></fa-icon></button>
+    </div>
+    
+    <form>
+        <select [(ngModel)]="selectedMushroomId" (ngModelChange)="updateMushroom()" name="selectedMushroom" id="pet-select">
+            <option value="" >Sélectionnez une catégorie de champignon</option>
+            <option *ngFor="let mushroom of mushrooms" value="{{ mushroom._id }}">{{ mushroom.name }}</option>
+        </select>
+        <img src="{{ selectedMushroom.image }}">
+
+        <div *ngIf="selectedMushroomId !== ''" class="info">
+            <h3>{{ selectedMushroom.name }}</h3>
+            <p class="description">{{ selectedMushroom.description}}</p>
+        </div>
+        
+        <button class="add-mushroom"><fa-icon [icon]="faPlus"></fa-icon> Ajouter</button>
+    </form> 
+</div>
