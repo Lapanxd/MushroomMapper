@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
+import { AddMushroomComponent } from '../add-mushroom/add-mushroom.component';
+import { IGeoPoint } from '../models/geo-point';
+import { MushroomService } from '../services/mushroom.service';
+import { GeoPointService } from '../services/geo-point.service';
 
 @Component({
   selector: 'app-map',
@@ -8,7 +12,10 @@ import * as L from 'leaflet';
 })
 export class MapComponent implements OnInit {
 
+  @ViewChild('container', {read: ViewContainerRef }) container!: ViewContainerRef;
+
   private map: any;
+  mushroomPoints!: IGeoPoint[];
 
   private initMap(): void {
     this.map = L.map('map', {
@@ -22,18 +29,46 @@ export class MapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    tiles.addTo(this.map);
+
     this.map.on('click', (e: any) => {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
       console.log(`${lat}, ${lng}`);
-    });
 
-    tiles.addTo(this.map);
+      let newPoint: IGeoPoint = {
+        location: {
+          type: "Point",
+          coordinates: [lat, lng]
+        },
+      };
+
+      this.callComponent(newPoint);
+    });
   }
 
-  constructor() { }
+  constructor(private geoPointService: GeoPointService) { }
 
   ngOnInit(): void {
+    this.mushroomPoints = [];
     this.initMap();
+    this.geoPointService.findAll().subscribe({
+      next: (geoPoints) => {
+        this.mushroomPoints = geoPoints;
+        this.mushroomPoints.forEach(point => {
+          console.log(point.location.coordinates[0], point.location.coordinates[1]);
+          var icon = new L.Icon.Default(); // icon de base temporaire en attendant de fix la shadow
+          icon.options.shadowSize = [0,0];
+          L.marker([point.location.coordinates[0], point.location.coordinates[1]], {icon: icon}).addTo(this.map);
+        });
+      }
+    });
+  }
+
+  callComponent(newPoint: IGeoPoint) {
+    this.container.clear();
+    const componentRef = this.container.createComponent(AddMushroomComponent);
+    componentRef.instance.newPoint = newPoint;
+    // set any inputs or outputs here
   }
 }

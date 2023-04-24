@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { MushroomService } from '../services/mushroom.service';
 import { IMushroom } from '../models/mushroom';
+import { IGeoPoint } from '../models/geo-point';
 
 @Component({
   selector: 'app-add-mushroom',
@@ -18,6 +19,8 @@ export class AddMushroomComponent implements OnInit {
   selectedMushroomId: string = "";
   selectedMushroom: IMushroom = {_id: "", name: "", description: "", image: ""};
 
+  @Input() newPoint!: IGeoPoint;
+
   constructor(private mushroomService: MushroomService) { }
 
   ngOnInit(): void {
@@ -26,6 +29,8 @@ export class AddMushroomComponent implements OnInit {
         this.mushrooms = mushrooms;
       }
     });
+
+    console.log(this.newPoint);
   }
 
   close(){
