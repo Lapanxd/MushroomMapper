@@ -16,4 +16,8 @@ export class GeoPointService {
   public findAll(): Observable<IGeoPoint[]>{
     return this.http.get<IGeoPoint[]>(`${environment.apiUrl}/${this.url}`);
   }
+
+  public create(mushroom: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/${this.url}`, mushroom);
+  }
 }

@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { MushroomService } from '../services/mushroom.service';
 import { IMushroom } from '../models/mushroom';
 import { IGeoPoint } from '../models/geo-point';
+import { GeoPointService } from '../services/geo-point.service';
 
 @Component({
   selector: 'app-add-mushroom',
@@ -18,10 +19,12 @@ export class AddMushroomComponent implements OnInit {
   mushrooms!: IMushroom[];
   selectedMushroomId: string = "";
   selectedMushroom: IMushroom = {_id: "", name: "", description: "", image: ""};
+  @Output() newPointAdded = new EventEmitter<IGeoPoint>();
 
   @Input() newPoint!: IGeoPoint;
 
-  constructor(private mushroomService: MushroomService) { }
+  constructor(private mushroomService: MushroomService,
+              private geoPointService: GeoPointService) { }
 
   ngOnInit(): void {
     this.mushroomService.findAll().subscribe({
@@ -29,8 +32,6 @@ export class AddMushroomComponent implements OnInit {
         this.mushrooms = mushrooms;
       }
     });
-
-    console.log(this.newPoint);
   }
 
   close(){
@@ -39,5 +40,21 @@ export class AddMushroomComponent implements OnInit {
 
   updateMushroom(){
     this.selectedMushroom = this.mushrooms.find(mushroom => mushroom._id === this.selectedMushroomId)!;
+  }
+
+  addMushroom(){
+    let newMushroom = {
+      mushroomName: this.selectedMushroom.name,
+      lat: this.newPoint.location.coordinates[0],
+      long: this.newPoint.location.coordinates[1],
+    }
+    this.geoPointService.create(newMushroom).subscribe(mushroom => {
+      if(mushroom.insertedId != ""){
+        this.display = false;
+        this.newPointAdded.emit(this.newPoint);
+      } else {
+        console.log("Erreur")
+      }
+    });
   }
 }

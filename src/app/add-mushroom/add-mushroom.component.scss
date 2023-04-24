@@ -66,5 +66,9 @@
             background: #3e7eff;
             transition: .1s;
         }
+        &:disabled {
+            background: #a6c4ff;
+            cursor: not-allowed;
+        }
     }
 }

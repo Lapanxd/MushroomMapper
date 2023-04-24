@@ -56,7 +56,7 @@ export class MapComponent implements OnInit {
       next: (geoPoints) => {
         this.mushroomPoints = geoPoints;
         this.mushroomPoints.forEach(point => {
-          console.log(point.location.coordinates[0], point.location.coordinates[1]);
+          //console.log(point.location.coordinates[0], point.location.coordinates[1]);
           var icon = new L.Icon.Default(); // icon de base temporaire en attendant de fix la shadow
           icon.options.shadowSize = [0,0];
           L.marker([point.location.coordinates[0], point.location.coordinates[1]], {icon: icon}).addTo(this.map);
@@ -69,6 +69,23 @@ export class MapComponent implements OnInit {
     this.container.clear();
     const componentRef = this.container.createComponent(AddMushroomComponent);
     componentRef.instance.newPoint = newPoint;
+    componentRef.instance.newPointAdded.subscribe(() => {
+      this.geoPointService.findAll().subscribe({
+        next: (geoPoints) => {
+          this.mushroomPoints = geoPoints;
+          this.mushroomPoints.forEach(point => {
+            //console.log(point.location.coordinates[0], point.location.coordinates[1]);
+            var icon = new L.Icon.Default(); // icon de base temporaire en attendant de fix la shadow
+            icon.options.shadowSize = [0,0];
+            L.marker([point.location.coordinates[0], point.location.coordinates[1]], {icon: icon}).addTo(this.map);
+          });
+        }
+      });
+    });
     // set any inputs or outputs here
+  }
+
+  onNewPointAdded(newPoint: IGeoPoint){
+    console.log('new point ' + newPoint);
   }
 }
